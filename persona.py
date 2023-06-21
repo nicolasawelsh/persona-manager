@@ -3,9 +3,10 @@ import names
 import random_address
 import phone_gen
 import datetime
+import secrets
 
 class Person:
-    def __init__(self, gender=None, firstname=None, lastname=None, address=None, phone=None, birthday=None, username=None, email=None):
+    def __init__(self, gender=None, firstname=None, lastname=None, address=None, phone=None, birthday=None, username=None, password=None, email=None):
         self.gender = gender
         self.firstname = firstname
         self.lastname = lastname
@@ -13,6 +14,7 @@ class Person:
         self.phone = phone
         self.birthday = birthday
         self.username = username
+        self.password = password
         self.email = email
 
         self.set_gender()
@@ -22,6 +24,7 @@ class Person:
         self.set_phone()
         self.set_birthday()
         self.set_username()
+        self.set_password()
         self.set_email()
 
     def set_gender(self):
@@ -73,9 +76,14 @@ class Person:
         if self.username is None:
             self.username = self.firstname[0].lower() + self.lastname.lower() + str(random.randint(10000,99999))
 
+    def set_password(self):
+        if self.password is None:
+            password_length = 13
+            self.password = secrets.token_urlsafe(password_length)
+
     def set_email(self):
         # Format:
-            # Username + @proton.me
+            # username + @proton.me
         # Example: 
             # aschwarzenegger12345@proton.me
         if self.email is None:
@@ -89,6 +97,7 @@ class Person:
         print(self.phone)
         print(self.birthday)
         print(self.username)
+        print(self.password)
         print(self.email)
     
 
