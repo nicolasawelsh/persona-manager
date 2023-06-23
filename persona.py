@@ -1,5 +1,6 @@
 import random
 import datetime
+import json
 import secrets
 import names
 import random_address
@@ -60,7 +61,9 @@ class Person(Base):
             #   'postalCode': '20500', 
             #   'coordinates': {'lat': 38.8976800, 'lng': -77.0365300}
             # }
-        self.address = self.address or random_address.real_random_address()
+        if self.address is None:
+            address_dict = random_address.real_random_address()
+            self.address = json.dumps(address_dict)
     
     def set_phone(self):
         # Example:
@@ -90,7 +93,7 @@ class Person(Base):
             self.username = self.firstname[0].lower() + self.lastname.lower() + str(random.randint(10000,99999))
 
     def set_password(self):
-        self.password = self.password or secrets.token_urlsafe(16)
+        self.password = self.password or secrets.token_urlsafe(10)
 
     def set_email(self):
         # Format:
