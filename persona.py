@@ -10,9 +10,11 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 
+# Create the engine and session
 engine = create_engine('sqlite:///personas.db', echo=True)
 Session = sessionmaker(bind=engine)
 Base = declarative_base()
+
 
 class Person(Base):
     __tablename__ = 'personas'
@@ -32,6 +34,7 @@ class Person(Base):
         self.generate_data()
 
     def generate_data(self):
+        """Generate random data for each attribute if not already set"""
         self.set_gender()
         self.set_firstname()
         self.set_lastname()
@@ -43,31 +46,25 @@ class Person(Base):
         self.set_email()
 
     def set_gender(self):
+        """Set gender attribute randomly if not already set"""
         self.gender = self.gender or random.choice(["male", "female"])
     
     def set_firstname(self):
+        """Set first name attribute randomly based on gender if not already set"""
         self.firstname = self.firstname or names.get_first_name(gender=self.gender)
 
     def set_lastname(self):
+        """Set last name attribute randomly if not already set"""
         self.lastname = self.lastname or names.get_last_name()
     
     def set_address(self):
-        # Example: 
-            # {
-            #   'address1': '1600 Pennsylvania Avenue NW', 
-            #   'address2': '', 
-            #   'city': 'Washington', 
-            #   'state': 'DC', 
-            #   'postalCode': '20500', 
-            #   'coordinates': {'lat': 38.8976800, 'lng': -77.0365300}
-            # }
+        """Set address attribute randomly using random_address library if not already set"""
         if self.address is None:
             address_dict = random_address.real_random_address()
             self.address = json.dumps(address_dict)
     
     def set_phone(self):
-        # Example:
-            # 9876543210
+        """Set phone attribute randomly if not already set"""
         if self.phone is None:
             area_code = random.randint(200, 999)
             prefix = random.randint(200, 999)
@@ -75,35 +72,28 @@ class Person(Base):
             self.phone = f"{area_code}{prefix}{line_number}"
     
     def set_birthday(self):
-        # Format:
-            # Year-Month-Day
-        # Example:
-            # 1947-07-30
+        """Set birthday attribute randomly if not already set"""
         if self.birthday is None:
             start_date = datetime.datetime.now() + datetime.timedelta(days=(-365*18))
             end_date = datetime.datetime.now() + datetime.timedelta(days=(-365*60))
             self.birthday = datetime.datetime.strftime((start_date + (end_date - start_date) * random.random()), "%Y-%m-%d")
 
     def set_username(self):
-        # Format:
-            # First initial + last name + random 5-digit number
-        # Example:
-            # aschwarzenegger12345
+        """Set username attribute based on first initial, last name, and random 5-digit number if not already set"""
         if self.username is None:
             self.username = self.firstname[0].lower() + self.lastname.lower() + str(random.randint(10000,99999))
 
     def set_password(self):
-        self.password = self.password or secrets.token_urlsafe(10)
+        """Set password attribute if not already set (16 characters)"""
+        self.password = self.password or secrets.token_urlsafe(12)
 
     def set_email(self):
-        # Format:
-            # username + @proton.me
-        # Example: 
-            # aschwarzenegger12345@proton.me
+        """Set email attribute based on username and fixed domain if not already set"""
         if self.email is None:
             self.email = self.username + "@proton.me"
 
     def print_person(self):
+        """Print the person's information in a readable format"""
         print()
         print("Person Information:")
         print(f"ID: {self.id}")
@@ -118,26 +108,31 @@ class Person(Base):
         print(f"Email: {self.email}")
     
     def save(self):
+        """Save the person object to the database"""
         session = Session()
         session.add(self)
         session.commit()
 
     @classmethod
     def get_all(cls):
+        """Retrieve all person objects from the database"""
         session = Session()
         return session.query(cls).all()
 
     @classmethod
     def delete_all(cls):
+        """Delete all person objects from the database"""
         session = Session()
         session.query(cls).delete()
         session.commit()
     
     @classmethod
     def delete_by_id(cls, id):
+        """Delete a person object from the database by ID"""
         session = Session()
         session.query(cls).filter_by(id=id).delete()
         session.commit()
 
 
+# Create the table if it doesn't exist
 Base.metadata.create_all(engine)
