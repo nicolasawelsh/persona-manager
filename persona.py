@@ -1,11 +1,11 @@
 import random
-import names
-import random_address
-import phone_gen
 import datetime
 import secrets
+import names
+import random_address
 
-class Person:
+
+class Person():
     def __init__(self, gender=None, firstname=None, lastname=None, address=None, phone=None, birthday=None, username=None, password=None, email=None):
         self.gender = gender
         self.firstname = firstname
@@ -17,6 +17,9 @@ class Person:
         self.password = password
         self.email = email
 
+        self.generate_data()
+
+    def generate_data(self):
         self.set_gender()
         self.set_firstname()
         self.set_lastname()
@@ -28,16 +31,13 @@ class Person:
         self.set_email()
 
     def set_gender(self):
-        if self.gender is None:
-            self.gender = random.choice(["male", "female"])
+        self.gender = self.gender or random.choice(["male", "female"])
     
     def set_firstname(self):
-        if self.firstname is None:
-            self.firstname = names.get_first_name(gender=self.gender)
+        self.firstname = self.firstname or names.get_first_name(gender=self.gender)
 
     def set_lastname(self):
-        if self.lastname is None:
-            self.lastname = names.get_last_name()
+        self.lastname = self.lastname or names.get_last_name()
     
     def set_address(self):
         # Example: 
@@ -49,14 +49,16 @@ class Person:
             #   'postalCode': '20500', 
             #   'coordinates': {'lat': 38.8976800, 'lng': -77.0365300}
             # }
-        if self.address is None:
-            self.address = random_address.real_random_address()
+        self.address = self.address or random_address.real_random_address()
     
     def set_phone(self):
         # Example:
             # 9876543210
         if self.phone is None:
-            self.phone = phone_gen.PhoneNumber("USA").get_number(full=False)
+            area_code = random.randint(200, 999)
+            prefix = random.randint(200, 999)
+            line_number = random.randint(1000, 9999)
+            self.phone = f"{area_code}{prefix}{line_number}"
     
     def set_birthday(self):
         # Format:
@@ -77,9 +79,7 @@ class Person:
             self.username = self.firstname[0].lower() + self.lastname.lower() + str(random.randint(10000,99999))
 
     def set_password(self):
-        if self.password is None:
-            password_length = 13
-            self.password = secrets.token_urlsafe(password_length)
+        self.password = self.password or secrets.token_urlsafe(16)
 
     def set_email(self):
         # Format:
@@ -90,16 +90,7 @@ class Person:
             self.email = self.username + "@proton.me"
 
     def print_person(self):
-        print(self.gender)
-        print(self.firstname)
-        print(self.lastname)
-        print(self.address)
-        print(self.phone)
-        print(self.birthday)
-        print(self.username)
-        print(self.password)
-        print(self.email)
-    
+        print(', '.join("%s: %s" % item for item in vars(self).items()))
 
 p1 = Person()
 p1.print_person()
