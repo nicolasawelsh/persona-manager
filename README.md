@@ -25,9 +25,9 @@ Persona Manager is a command-line tool for managing personas - fictional charact
 
 ## Usage
 
-To use the Persona Manager, run the persona.py script with the desired command and options.
+To use the Persona Manager, run the persona-cli.py script with the desired command and options.
 
-```python persona.py <command> [options]```
+```python persona-cli.py <command> [options]```
 
 ### Available Commands
 
@@ -40,21 +40,21 @@ To use the Persona Manager, run the persona.py script with the desired command a
 
 Create a new randomized persona:
 
-```python persona.py create```
+```python persona-cli.py create```
 
 View all personas:
 
-```python persona.py view```
+```python persona-cli.py view```
 
 Delete a persona by ID (ex: delete persona 5):
-```python persona.py delete 5```
+```python persona-cli.py delete 5```
 
 Delete all personas:
-```python persona.py delete --all```
+```python persona-cli.py delete --all```
 
 Modify a persona (ex: change persona 2's last name to Doe):
 
-```python persona.py modify 2 --lastname Doe```
+```python persona-cli.py modify 2 --lastname Doe```
 
 ## License
 
