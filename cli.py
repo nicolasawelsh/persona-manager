@@ -19,9 +19,13 @@ def delete_personas(args):
     if args.id:
         Person.delete_by_id(args.id)
         print(f"Persona with ID {args.id} deleted successfully.")
-    else:
-        Person.delete_all()
-        print("All personas deleted successfully.")
+    elif args.all:
+        confirmation = input("Are you sure you want to delete all personas? (y/N): ")
+        if confirmation.lower() == "y":
+            Person.delete_all()
+            print("All personas deleted successfully.")
+        else:
+            print("Deletion canceled.")
 
 def modify_persona(args):
     personas = Person.get_all()
@@ -34,6 +38,10 @@ def modify_persona(args):
 
                 if args.gender:
                     persona.gender = args.gender
+                if args.firstname:
+                    persona.firstname = args.firstname
+                if args.lastname:
+                    persona.lastname = args.lastname
                 if args.address:
                     persona.address = args.address
                 if args.phone:
@@ -68,14 +76,17 @@ def main():
     view_parser.set_defaults(func=view_personas)
 
     # Delete Personas
-    delete_parser = subparsers.add_parser("delete", help="Delete a persona by ID")
-    delete_parser.add_argument("id", type=int, help="ID of the persona to delete")
+    delete_parser = subparsers.add_parser("delete", help="Delete a persona by ID or all personas")
+    delete_parser.add_argument("id", type=int, nargs="?", help="ID of the persona to delete")
+    delete_parser.add_argument("--all", action="store_true", help="Delete all personas")
     delete_parser.set_defaults(func=delete_personas)
 
     # Modify Persona
     modify_parser = subparsers.add_parser("modify", help="Modify an existing persona")
     modify_parser.add_argument("id", type=int, help="ID of the persona to modify")
     modify_parser.add_argument("--gender", help="Update gender")
+    modify_parser.add_argument("--firstname", help="Update first name")
+    modify_parser.add_argument("--lastname", help="Update last name")
     modify_parser.add_argument("--address", help="Update address")
     modify_parser.add_argument("--phone", help="Update phone number")
     modify_parser.add_argument("--birthday", help="Update birthday")
