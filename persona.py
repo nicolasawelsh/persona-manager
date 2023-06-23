@@ -4,19 +4,30 @@ import secrets
 import names
 import random_address
 
+from sqlalchemy import create_engine, Column, String, Integer
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 
-class Person():
-    def __init__(self, gender=None, firstname=None, lastname=None, address=None, phone=None, birthday=None, username=None, password=None, email=None):
-        self.gender = gender
-        self.firstname = firstname
-        self.lastname = lastname
-        self.address = address
-        self.phone = phone
-        self.birthday = birthday
-        self.username = username
-        self.password = password
-        self.email = email
 
+engine = create_engine('sqlite:///personas.db', echo=True)
+Session = sessionmaker(bind=engine)
+Base = declarative_base()
+
+class Person(Base):
+    __tablename__ = 'personas'
+    id = Column(Integer, primary_key=True)
+    gender = Column(String)
+    firstname = Column(String)
+    lastname = Column(String)
+    address = Column(String)
+    phone = Column(String)
+    birthday = Column(String)
+    username = Column(String)
+    password = Column(String)
+    email = Column(String)
+    
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.generate_data()
 
     def generate_data(self):
@@ -91,6 +102,28 @@ class Person():
 
     def print_person(self):
         print(', '.join("%s: %s" % item for item in vars(self).items()))
+    
+    def save(self):
+        session = Session()
+        session.add(self)
+        session.commit()
 
-p1 = Person()
-p1.print_person()
+    @classmethod
+    def get_all(cls):
+        session = Session()
+        return session.query(cls).all()
+
+    @classmethod
+    def delete_all(cls):
+        session = Session()
+        session.query(cls).delete()
+        session.commit()
+    
+    @classmethod
+    def delete_by_name(cls, firstname, lastname):
+        session = Session()
+        session.query(cls).filter_by(firstname=firstname, lastname=lastname).delete()
+        session.commit()
+
+
+Base.metadata.create_all(engine)
