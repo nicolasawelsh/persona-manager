@@ -104,7 +104,18 @@ class Person(Base):
             self.email = self.username + "@proton.me"
 
     def print_person(self):
-        print(', '.join("%s: %s" % item for item in vars(self).items()))
+        print()
+        print("Person Information:")
+        print(f"ID: {self.id}")
+        print(f"Gender: {self.gender}")
+        print(f"First Name: {self.firstname}")
+        print(f"Last Name: {self.lastname}")
+        print(f"Address: {self.address}")
+        print(f"Phone: {self.phone}")
+        print(f"Birthday: {self.birthday}")
+        print(f"Username: {self.username}")
+        print(f"Password: {self.password}")
+        print(f"Email: {self.email}")
     
     def save(self):
         session = Session()
@@ -123,9 +134,9 @@ class Person(Base):
         session.commit()
     
     @classmethod
-    def delete_by_name(cls, firstname, lastname):
+    def delete_by_id(cls, id):
         session = Session()
-        session.query(cls).filter_by(firstname=firstname, lastname=lastname).delete()
+        session.query(cls).filter_by(id=id).delete()
         session.commit()
 
 
